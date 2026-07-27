@@ -57,24 +57,27 @@ Feature Engineering
 
 ## Результати
 
-| Модель | Параметри | Train Log Loss | Validation Log Loss | Test Log Loss |
+
+| Модель | Параметри | Train Score | Validation Score | Test Score |
 |---|---|---|---|---|
-| Logistic Regression (baseline) | C=5.0 | 0.3661 | 0.4388 | 0.4435 |
-| Logistic Regression (tuned) | C=1.0 (GridSearchCV) | — | 0.4314 | 0.4357 |
-| LightGBM | n_estimators=150, max_depth=6, num_leaves=31 | 0.4642 | 0.4684 | 0.4702 |
-| Random Forest (tuned) | n_estimators=100, max_depth=20, min_samples_leaf=5, max_features=0.3 (RandomizedSearchCV) | 0.4594 | 0.4744 | 0.4763 |
-| Logistic Regression + BERT similarity* | C=5.0, підвибірка 5000/1000/1000 | — | 0.5086 | 0.5113 |
+| Logistic Regression (baseline) | C=5.0 | 0.3679 | 0.4369 | 0.4424 |
+| Logistic Regression (tuned) | C=1.0 (GridSearchCV, cv=3) | — | 0.4280 | 0.4332 |
+| LightGBM | n_estimators=150, max_depth=6, num_leaves=31 | 0.4526 | 0.4560 | 0.4593 |
+| Random Forest | n_estimators=100, max_depth=20, min_samples_leaf=5, max_features=0.3 (RandomizedSearchCV) | 0.4298 | 0.4549 | 0.4580 |
+| Logistic Regression + BERT similarity | C=5.0, підвибірка 5000/1000/1000 | — | 0.5080 | 0.5119 |
+
 
 *\*навчена й перевірена на підвибірці 5000/1000/1000 рядків (замість повних 258 743/64 686/64 686 для решти моделей) через обчислювальні обмеження — результат не можна напряму порівнювати з іншими рядками таблиці.*
 
-**Найкраща модель за основною метрикою — Logistic Regression (tuned), Test Log Loss 0.4357.**
+**Найкраща модель за основною метрикою — Logistic Regression (tuned), Test Log Loss 0.4332.**
 
 ***Інструменти***
 Python, pandas, scikit-learn, LightGBM, PyTorch, HuggingFace Transformers (BERT), NLTK, matplotlib/seaborn
 
 ## Висновки
 
-**Яка модель працює найкраще і чому.** Найкращий результат на test — Логістична регресія з параметром C=1.0 (помилка Log Loss на тесті 0.4357). Вона працювала з текстом, розбитим на окремі слова та пари слів (TF-IDF), а також використовувала метрику схожості слів (word_share_ratio). Точність (Accuracy) моделі склала 79%.
+**Яка модель працює найкраще і чому.** 
+Найкращий результат на test — Логістична регресія з параметром C=1.0 (Log Loss на тесті 0.4332). Вона працювала з текстом, розбитим на окремі слова та пари слів (TF-IDF), а також використовувала три сконструйовані ознаки — частку спільних слів (word_share_ratio), Manhattan та Euclidean відстані. Точність (Accuracy) моделі склала 79%.
 
 **Практичні інсайти.** 
 - Просте інженерне рішення (Jaccard similarity) виявилось дуже потужною ознакою — звичайна частка спільних слів між двома питаннями виявилася найціннішою підказкою для моделей. У дублікатів цей показник у середньому складає 0.58, а у різних питань — лише 0.37.
